@@ -4,5 +4,5 @@ cd "$(dirname "$0")/.."
 
 mkdir -p /db
 
-sqlite3 /db/dev.db & \
+sqlite3 /db/data.db & \
   air -c ./air.toml

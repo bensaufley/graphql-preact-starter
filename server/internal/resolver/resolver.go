@@ -1,12 +1,15 @@
 package resolver
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type QueryResolver struct {
-	Db interface{}
+	Db *sql.DB
 }
 
-func NewRoot(db interface{}) *QueryResolver {
+func NewRoot(db *sql.DB) *QueryResolver {
 	return &QueryResolver{Db: db}
 }
 

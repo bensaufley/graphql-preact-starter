@@ -10,6 +10,7 @@ import (
 	"github.com/graph-gophers/graphql-go/relay"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/bensaufley/graphql-preact-starter/internal/db"
 	"github.com/bensaufley/graphql-preact-starter/internal/graphiql"
 	"github.com/bensaufley/graphql-preact-starter/internal/resolver"
 	"github.com/bensaufley/graphql-preact-starter/internal/schema"
@@ -39,7 +40,11 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("could not build schema string")
 	}
-	schm, err := graphql.ParseSchema(s, resolver.NewRoot(nil))
+	sqlite, err := db.Get()
+	if err != nil {
+		log.WithError(err).Fatal("error initializing database")
+	}
+	schm, err := graphql.ParseSchema(s, resolver.NewRoot(sqlite))
 	if err != nil {
 		log.WithError(err).Fatal("could not parse schema")
 	}

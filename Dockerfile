@@ -8,7 +8,7 @@ COPY server/* ./
 
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -a -installsuffix 'static' -o server ./cmd/server
 
-FROM node:16.5.0-alpine as node-builder
+FROM node:16.5.0 as node-builder
 
 WORKDIR /tmp
 COPY package*.json ./

@@ -1,24 +1,74 @@
 // Generated file. Do not edit!
 
+import * as Urql from '@urql/preact';
+import gql from 'graphql-tag';
+
 import type * as SchemaTypes from '~graphql/schema.generated';
 
-import gql from 'graphql-tag';
-import * as Urql from '@urql/preact';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export type HomeQueryVariables = SchemaTypes.Exact<{ [key: string]: never; }>;
+export type HomeSubscriptionVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
+export type HomeSubscription = {
+  __typename?: 'Subscription';
+  watchTodos: Array<{
+    __typename?: 'Todo';
+    id: string;
+    contents: string;
+    status: SchemaTypes.TodoStatus;
+  }>;
+};
 
-export type HomeQuery = { __typename?: 'Query', foo: SchemaTypes.Maybe<{ __typename?: 'Bar', name: string }> };
+export type AddTodoMutationVariables = SchemaTypes.Exact<{
+  contents: SchemaTypes.Scalars['String'];
+}>;
 
+export type AddTodoMutation = {
+  __typename?: 'Mutation';
+  addTodo: SchemaTypes.Maybe<{ __typename?: 'Todo'; id: string }>;
+};
+
+export type DeleteTodoMutationVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['ID'];
+}>;
+
+export type DeleteTodoMutation = { __typename?: 'Mutation'; deleteTodo: boolean };
 
 export const HomeDocument = gql`
-    query Home {
-  foo {
-    name
+  subscription Home {
+    watchTodos {
+      id
+      contents
+      status
+    }
   }
-}
-    `;
+`;
 
-export function useHomeQuery(options: Omit<Urql.UseQueryArgs<HomeQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<HomeQuery>({ query: HomeDocument, ...options });
-};
+export function useHomeSubscription<TData = HomeSubscription>(
+  options: Omit<Urql.UseSubscriptionArgs<HomeSubscriptionVariables>, 'query'> = {},
+  handler?: Urql.SubscriptionHandler<HomeSubscription, TData>,
+) {
+  return Urql.useSubscription<HomeSubscription, TData, HomeSubscriptionVariables>(
+    { query: HomeDocument, ...options },
+    handler,
+  );
+}
+export const AddTodoDocument = gql`
+  mutation AddTodo($contents: String!) {
+    addTodo(input: { contents: $contents }) {
+      id
+    }
+  }
+`;
+
+export function useAddTodoMutation() {
+  return Urql.useMutation<AddTodoMutation, AddTodoMutationVariables>(AddTodoDocument);
+}
+export const DeleteTodoDocument = gql`
+  mutation DeleteTodo($id: ID!) {
+    deleteTodo(id: $id)
+  }
+`;
+
+export function useDeleteTodoMutation() {
+  return Urql.useMutation<DeleteTodoMutation, DeleteTodoMutationVariables>(DeleteTodoDocument);
+}

@@ -1,29 +1,22 @@
 package resolver
 
-import (
-	"context"
-	"database/sql"
-)
+import "database/sql"
 
-type QueryResolver struct {
-	Db *sql.DB
+type Resolver struct {
+	DB            *sql.DB
+	Subscriptions Subscriptions
 }
 
-func NewRoot(db *sql.DB) *QueryResolver {
-	return &QueryResolver{Db: db}
-}
-
-type Bar struct {
-	name string
-}
-
-func (r QueryResolver) Foo(ctx context.Context) (*Bar, error) {
-	return &Bar{}, nil
-}
-
-func (b *Bar) Name() string {
-	if b == nil {
-		return ""
+func NewRoot(db *sql.DB) *Resolver {
+	r := &Resolver{
+		DB: db,
+		Subscriptions: Subscriptions{
+			updateTodos:     make(chan *[]Todo),
+			todoSubscribers: make(chan *todosSubscriber),
+		},
 	}
-	return b.name
+
+	go r.broadcastTodoUpdate()
+
+	return r
 }

@@ -1,3 +1,4 @@
 type Query {
-  foo: Bar
+  getTodos: [Todo!]!
+  getTodo(id: ID!): Todo
 }

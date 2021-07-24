@@ -75,6 +75,7 @@ const config: Configuration = {
     publicPath: '/static/',
   },
 
+  devtool: mode === 'production' ? 'hidden-source-map' : 'eval-source-map',
   mode,
   module: {
     rules: [babelLoaderRule, postcssRule],

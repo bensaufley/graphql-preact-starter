@@ -40,6 +40,14 @@ This repo adheres loosely to the [Scripts to Rule Them All] convention:
 - `script/build` builds a single Docker image for Production using the
   `Dockerfile` at the root of the repo and tag it `:latest`.
 
+Since this repo also contains, in a way, two distinct applications, there
+are also some helper scripts to make life a little easier:
+
+- `script/npm` passes arguments to `npm` in the `client` directory, e.g.
+  `script/npm run codegen`
+- `script/go` passes arguments to `go` in the `server` directory, e.g.
+  `script/go vet ./...`
+
 [graphql-go]: https://github.com/graph-gophers/graphql-go
 [gql-example]: https://github.com/tonyghita/graphql-go-example
 [scripts to rule them all]: https://github.com/github/scripts-to-rule-them-all

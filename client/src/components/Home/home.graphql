@@ -1,5 +1,17 @@
-query Home {
-  foo {
-    name
+subscription Home {
+  watchTodos {
+    id
+    contents
+    status
   }
+}
+
+mutation AddTodo($contents: String!) {
+  addTodo(input: {contents: $contents}) {
+    id
+  }
+}
+
+mutation DeleteTodo($id: ID!) {
+  deleteTodo(id: $id)
 }

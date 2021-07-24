@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	_ "embed"
+	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -11,8 +12,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Get() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "file:/db/data.db?mode=rwc")
+type Config struct {
+	DBPath         string
+	MigrationsPath string
+}
+
+func (cfg *Config) Get() (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?mode=rwc", cfg.DBPath))
 	if err != nil {
 		return nil, errors.Wrap(err, "could not open database")
 	}
@@ -20,17 +26,19 @@ func Get() (*sql.DB, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "could not initialize migration driver")
 	}
-	m, err := migrate.NewWithDatabaseInstance(
-		"file://migrations",
-		"sqlite3",
-		dbDriver,
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not initialize migrator")
-	}
-	err = m.Up()
-	if err != nil {
-		return nil, errors.Wrap(err, "could not run migrations")
+	if cfg.MigrationsPath != "" {
+		m, err := migrate.NewWithDatabaseInstance(
+			fmt.Sprintf("file://%s", cfg.MigrationsPath),
+			"sqlite3",
+			dbDriver,
+		)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not initialize migrator")
+		}
+		err = m.Up()
+		if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+			return nil, errors.Wrap(err, "could not run migrations")
+		}
 	}
 	return db, nil
 }

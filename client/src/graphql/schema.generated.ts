@@ -13,12 +13,51 @@ export type Scalars = {
   Float: number;
 };
 
-export type Bar = {
-  __typename?: 'Bar';
-  name: Scalars['String'];
+export type Mutation = {
+  __typename?: 'Mutation';
+  addTodo: Maybe<Todo>;
+  deleteTodo: Scalars['Boolean'];
+};
+
+export type MutationAddTodoArgs = {
+  input: TodoInput;
+};
+
+export type MutationDeleteTodoArgs = {
+  id: Scalars['ID'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  foo: Maybe<Bar>;
+  getTodos: Array<Todo>;
+  getTodo: Maybe<Todo>;
 };
+
+export type QueryGetTodoArgs = {
+  id: Scalars['ID'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  watchTodos: Array<Todo>;
+};
+
+export type Todo = {
+  __typename?: 'Todo';
+  id: Scalars['ID'];
+  contents: Scalars['String'];
+  status: TodoStatus;
+};
+
+export type TodoInput = {
+  contents: Scalars['String'];
+  status: Maybe<TodoStatus>;
+};
+
+export enum TodoStatus {
+  Unstarted = 'UNSTARTED',
+  InProgress = 'IN_PROGRESS',
+  Abandoned = 'ABANDONED',
+  Complete = 'COMPLETE',
+  Deleted = 'DELETED',
+}

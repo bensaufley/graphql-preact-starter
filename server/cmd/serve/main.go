@@ -6,13 +6,11 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/graph-gophers/graphql-go"
-	"github.com/graph-gophers/graphql-go/relay"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/bensaufley/graphql-preact-starter/internal/db"
 	"github.com/bensaufley/graphql-preact-starter/internal/graphiql"
-	"github.com/bensaufley/graphql-preact-starter/internal/resolver"
+	"github.com/bensaufley/graphql-preact-starter/internal/graphql"
 	"github.com/bensaufley/graphql-preact-starter/internal/schema"
 )
 
@@ -36,24 +34,23 @@ func handleStatic(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	s, err := schema.String()
-	if err != nil {
-		log.WithError(err).Fatal("could not build schema string")
+	cfg := &graphql.GraphQLConfig{
+		DB: &db.Config{
+			DBPath:         "/db/data.db",
+			MigrationsPath: "migrations",
+		},
+		SchemaString: schema.String,
 	}
-	sqlite, err := db.Get()
+	gqlhandler, err := cfg.NewHandler()
 	if err != nil {
-		log.WithError(err).Fatal("error initializing database")
-	}
-	schm, err := graphql.ParseSchema(s, resolver.NewRoot(sqlite))
-	if err != nil {
-		log.WithError(err).Fatal("could not parse schema")
+		log.WithError(err).Fatal("could not initialize GraphQL handler")
 	}
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/static/", handleStatic)
 	mux.Handle("/graphiql", graphiql.Serve)
-	mux.Handle("/graphql", &relay.Handler{Schema: schm})
+	mux.Handle("/graphql", gqlhandler)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "/public/index.html")
 	})

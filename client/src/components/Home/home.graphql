@@ -1,9 +1,21 @@
-subscription Home {
-  watchTodos {
+query GetTodos {
+  todos: getTodos {
     id
     contents
     status
   }
+}
+
+subscription TodoAdded {
+  todo: todoAdded {
+    id
+    contents
+    status
+  }
+}
+
+subscription TodoDeleted {
+  todoID: todoDeleted
 }
 
 mutation AddTodo($contents: String!) {

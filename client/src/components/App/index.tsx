@@ -1,9 +1,12 @@
 import '~components/App/index.css';
 
+import type urqlDevtools from '@urql/devtools';
+import { cacheExchange } from '@urql/exchange-graphcache';
 import {
   Client,
   createClient,
-  defaultExchanges,
+  dedupExchange,
+  fetchExchange,
   Provider as UrqlProvider,
   subscriptionExchange,
 } from '@urql/preact';
@@ -12,6 +15,27 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 import styles from '~components/App/styles.modules.css';
 import Home from '~components/Home';
+import { todoAdded, todoDeleted } from '~lib/cacheExchangeResolvers';
+
+let exchanges = [
+  dedupExchange,
+  cacheExchange({
+    updates: {
+      Subscription: {
+        todoAdded,
+        todoDeleted,
+      },
+    },
+  }),
+  fetchExchange,
+];
+/* istanbul ignore if */
+if (process.env.NODE_ENV === 'development') {
+  /* eslint-disable global-require, @typescript-eslint/no-var-requires */
+  const { devtoolsExchange }: typeof urqlDevtools = require('@urql/devtools');
+  exchanges = [devtoolsExchange, ...exchanges];
+  /* eslint-enable global-require, @typescript-eslint/no-var-requires */
+}
 
 const App: FunctionComponent<{ client?: Client; subscriptionClient?: SubscriptionClient }> = ({
   subscriptionClient = new SubscriptionClient(
@@ -23,7 +47,7 @@ const App: FunctionComponent<{ client?: Client; subscriptionClient?: Subscriptio
   client = createClient({
     url: '/graphql',
     exchanges: [
-      ...defaultExchanges,
+      ...exchanges,
       subscriptionExchange({
         forwardSubscription(operation) {
           return subscriptionClient.request(operation);

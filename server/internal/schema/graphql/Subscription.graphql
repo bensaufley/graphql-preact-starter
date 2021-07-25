@@ -1,3 +1,4 @@
 type Subscription {
-  watchTodos: [Todo!]!
+  todoAdded: Todo!
+  todoDeleted: ID!
 }

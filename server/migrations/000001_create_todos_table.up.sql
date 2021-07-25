@@ -13,7 +13,7 @@ VALUES
 ;
 
 CREATE TABLE todos (
-  id INTEGER PRIMARY KEY,
+  ulid TEXT PRIMARY KEY,
   contents TEXT NOT NULL,
   todo_status_id INTEGER NOT NULL,
   FOREIGN KEY (todo_status_id) REFERENCES todo_statuses(id)

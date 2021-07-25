@@ -1,6 +1,10 @@
 package resolver
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/graph-gophers/graphql-go"
+)
 
 type Resolver struct {
 	DB            *sql.DB
@@ -11,12 +15,15 @@ func NewRoot(db *sql.DB) *Resolver {
 	r := &Resolver{
 		DB: db,
 		Subscriptions: Subscriptions{
-			updateTodos:     make(chan *[]Todo),
-			todoSubscribers: make(chan *todosSubscriber),
+			todoAdded:   make(chan Todo),
+			todoDeleted: make(chan graphql.ID),
+
+			addedSubscribers:   make(chan *addedSubscriber),
+			deletedSubscribers: make(chan *deletedSubscriber),
 		},
 	}
 
-	go r.broadcastTodoUpdate()
+	go r.broadcastTodoChanges()
 
 	return r
 }

@@ -39,7 +39,8 @@ export type QueryGetTodoArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  watchTodos: Array<Todo>;
+  todoAdded: Todo;
+  todoDeleted: Scalars['ID'];
 };
 
 export type Todo = {

@@ -24,6 +24,8 @@
     "@types/webpack": "^5.28.0",
     "@types/webpack-env": "^1.16.2",
     "@types/webpack-node-externals": "^2.5.2",
+    "@urql/devtools": "^2.0.3",
+    "@urql/exchange-graphcache": "^4.2.1",
     "@urql/preact": "^2.0.2",
     "babel-loader": "^8.2.2",
     "babel-plugin-module-resolver": "^4.1.0",

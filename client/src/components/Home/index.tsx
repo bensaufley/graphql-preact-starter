@@ -2,17 +2,15 @@ import { FunctionComponent, h, JSX } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 
 import {
-  HomeSubscription,
   useAddTodoMutation,
   useDeleteTodoMutation,
-  useHomeSubscription,
+  useGetTodosQuery,
+  useTodoAddedSubscription,
+  useTodoDeletedSubscription,
 } from '~components/Home/home.generated';
+import { Todo } from '~graphql/schema.generated';
 
-const ListItem = ({
-  id,
-  contents,
-  status,
-}: HomeSubscription['watchTodos'] extends Array<infer A> ? A : never) => {
+const ListItem = ({ id, contents, status }: Todo) => {
   const [_, deleteMutation] = useDeleteTodoMutation();
   const deleteTodo: JSX.MouseEventHandler<HTMLButtonElement> = useCallback(
     (e) => {
@@ -23,8 +21,8 @@ const ListItem = ({
   );
 
   return (
-    <li>
-      {id}. {contents} ({status}){' '}
+    <li id={id} title={id}>
+      {contents} ({status}){' '}
       <button type="button" onClick={deleteTodo}>
         &times;
       </button>
@@ -33,8 +31,10 @@ const ListItem = ({
 };
 
 const Home: FunctionComponent = () => {
-  const [{ data, error }] = useHomeSubscription();
+  const [{ data, error, fetching }] = useGetTodosQuery();
   const [_, addTodo] = useAddTodoMutation();
+  useTodoAddedSubscription();
+  useTodoDeletedSubscription();
 
   const [newTodoContent, setNewTodoContent] = useState('');
   const handleChange: JSX.GenericEventHandler<HTMLInputElement> = useCallback(
@@ -60,10 +60,11 @@ const Home: FunctionComponent = () => {
         <input type="text" onChange={handleChange} name="contents" value={newTodoContent} />
         <button type="submit">Create</button>
       </form>
-      {error && <p>Error: {error.message}</p>}
-      {!error && (
+      {fetching && <p>Loading&hellip;</p>}
+      {!fetching && error && <p>Error: {error.message}</p>}
+      {!fetching && !error && (
         <ul>
-          {data?.watchTodos.map(({ id, contents, status }) => (
+          {data?.todos?.map(({ id, contents, status }) => (
             <ListItem id={id} contents={contents} status={status} />
           ))}
         </ul>

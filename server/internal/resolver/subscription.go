@@ -2,62 +2,75 @@ package resolver
 
 import (
 	"context"
-	"math/rand"
 	"time"
 
-	"github.com/oklog/ulid/v2"
-	"github.com/sirupsen/logrus"
+	"github.com/graph-gophers/graphql-go"
+
+	"github.com/bensaufley/graphql-preact-starter/internal/ulid"
 )
 
 type Subscriptions struct {
-	updateTodos     chan *[]Todo
-	todoSubscribers chan *todosSubscriber
+	todoAdded   chan Todo
+	todoDeleted chan graphql.ID
+
+	addedSubscribers   chan *addedSubscriber
+	deletedSubscribers chan *deletedSubscriber
 }
 
-type todosSubscriber struct {
+type addedSubscriber struct {
 	stop   <-chan struct{}
-	events chan<- []Todo
+	events chan<- Todo
 }
 
-func (r *Resolver) WatchTodos(ctx context.Context) (<-chan []Todo, error) {
-	ch := make(chan []Todo)
-	r.Subscriptions.todoSubscribers <- &todosSubscriber{events: ch, stop: ctx.Done()}
-	go func(r *Resolver) {
-		if todos, err := r.GetTodos(context.Background()); err != nil {
-			logrus.WithError(err).Warn("error fetching TODOs")
-		} else {
-			ch <- todos
-		}
-	}(r)
+type deletedSubscriber struct {
+	stop   <-chan struct{}
+	events chan<- graphql.ID
+}
+
+func (r *Resolver) TodoAdded(ctx context.Context) (<-chan Todo, error) {
+	ch := make(chan Todo)
+	r.Subscriptions.addedSubscribers <- &addedSubscriber{events: ch, stop: ctx.Done()}
 	return ch, nil
 }
 
-func (r *Resolver) broadcastTodoUpdate() {
-	subscribers := map[string]*todosSubscriber{}
+func (r *Resolver) TodoDeleted(ctx context.Context) (<-chan graphql.ID, error) {
+	ch := make(chan graphql.ID)
+	r.Subscriptions.deletedSubscribers <- &deletedSubscriber{events: ch, stop: ctx.Done()}
+	return ch, nil
+}
+
+func (r *Resolver) broadcastTodoChanges() {
+	addedSubscribers := map[string]*addedSubscriber{}
+	deletedSubscribers := map[string]*deletedSubscriber{}
 	unsubscribe := make(chan string)
-	t := time.Now()
-	entropy := ulid.Monotonic(rand.New(rand.NewSource(t.UnixNano())), 0)
+	ug := ulid.NewGenerator()
 
 	for {
 		select {
 		case id := <-unsubscribe:
-			delete(subscribers, id)
-		case s := <-r.Subscriptions.todoSubscribers:
-			subscribers[ulid.MustNew(ulid.Timestamp(time.Now()), entropy).String()] = s
-		case e := <-r.Subscriptions.updateTodos:
-			for id, s := range subscribers {
-				go func(id string, s *todosSubscriber) {
+			delete(addedSubscribers, id)
+		case s := <-r.Subscriptions.addedSubscribers:
+			addedSubscribers[ug.String()] = s
+		case s := <-r.Subscriptions.deletedSubscribers:
+			deletedSubscribers[ug.String()] = s
+		case e := <-r.Subscriptions.todoAdded:
+			for id, s := range addedSubscribers {
+				go func(id string, s *addedSubscriber) {
 					select {
 					case <-s.stop:
 						unsubscribe <- id
-						return
-					default:
+					case s.events <- e:
+					case <-time.After(time.Second):
 					}
-
+				}(id, s)
+			}
+		case e := <-r.Subscriptions.todoDeleted:
+			for id, s := range deletedSubscribers {
+				go func(id string, s *deletedSubscriber) {
 					select {
 					case <-s.stop:
 						unsubscribe <- id
-					case s.events <- *e:
+					case s.events <- e:
 					case <-time.After(time.Second):
 					}
 				}(id, s)

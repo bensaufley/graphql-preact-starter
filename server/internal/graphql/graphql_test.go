@@ -20,7 +20,7 @@ func TestNewHandler(t *testing.T) {
 		assert.FailNow(t, "could not create temp database file", err)
 	}
 
-	cfg := graphql.GraphQLConfig{
+	cfg := graphql.Config{
 		DB: &db.Config{
 			DBPath: tmpFile,
 		},

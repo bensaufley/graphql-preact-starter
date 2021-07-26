@@ -12,12 +12,12 @@ import (
 	"github.com/bensaufley/graphql-preact-starter/internal/resolver"
 )
 
-type GraphQLConfig struct {
+type Config struct {
 	DB           *db.Config
 	SchemaString func() (string, error)
 }
 
-func (cfg *GraphQLConfig) NewHandler() (http.HandlerFunc, error) {
+func (cfg *Config) NewHandler() (http.HandlerFunc, error) {
 	s, err := cfg.SchemaString()
 	if err != nil {
 		log.WithError(err).Fatal("could not build schema string")

@@ -58,7 +58,7 @@ const App: FunctionComponent<{ client?: Client; subscriptionClient?: Subscriptio
 }) => (
   <UrqlProvider value={client}>
     <header class={styles.siteHeader}>
-      <h1>GraphQL App</h1>
+      <h1>Todo App</h1>
     </header>
     <nav />
     <main>

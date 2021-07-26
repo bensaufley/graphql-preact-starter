@@ -3,3 +3,4 @@ node_modules
 !/client/.build/.keep
 /client/coverage
 /server/tmp
+coverage

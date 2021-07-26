@@ -72,7 +72,8 @@
     "dev": "npm-run-all --parallel codegen:watch build:watch",
     "lint": "npm-run-all --parallel --aggregate-output --continue-on-error lint:es lint:ts",
     "lint:es": "eslint --format unix .",
-    "lint:ts": "tsc --noEmit --pretty false"
+    "lint:ts": "tsc --noEmit --pretty false",
+    "test": "jest"
   },
   "version": "0.1.0"
 }

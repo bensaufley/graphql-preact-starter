@@ -147,7 +147,6 @@ const baseTestConfig: Config.InitialOptions = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    '\\.(gql|graphqls?)$': 'jest-transform-graphql',
     '\\.[jt]sx?$': 'babel-jest',
   },
 
@@ -182,7 +181,7 @@ const clientTestConfig: Config.InitialOptions = {
   testEnvironment: 'jsdom',
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['<rootDir>/spec/client/**/*.spec.[jt]s?(x)'],
+  testMatch: ['<rootDir>/spec/**/*.spec.[jt]s?(x)'],
 };
 
 export default <Config.InitialOptions>{

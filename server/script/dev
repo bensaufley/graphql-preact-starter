@@ -2,5 +2,4 @@
 
 cd "$(dirname "$0")/.."
 
-sqlite3 /db/data.db & \
-  air -c ./air.toml
+air -c ./air.toml

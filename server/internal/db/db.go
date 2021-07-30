@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	_ "embed"
 	"fmt"
+	"os"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -41,4 +42,16 @@ func (cfg *Config) Get() (*sql.DB, error) {
 		}
 	}
 	return db, nil
+}
+
+func (cfg *Config) InitFile() error {
+	_, err := os.Stat(cfg.DBPath)
+	if os.IsNotExist(err) {
+		file, err := os.Create(cfg.DBPath)
+		if err != nil {
+			return err
+		}
+		file.Close()
+	}
+	return nil
 }

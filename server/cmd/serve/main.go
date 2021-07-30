@@ -14,10 +14,14 @@ import (
 func main() {
 	cfg := &graphql.Config{
 		DB: &db.Config{
-			DBPath:         "/db/data.db",
+			DBPath:         "/storage/data.db",
 			MigrationsPath: "migrations",
 		},
 		SchemaString: schema.String,
+	}
+
+	if err := cfg.DB.InitFile(); err != nil {
+		log.WithError(err).Fatal("could not initialize database")
 	}
 
 	mux, err := server.New(cfg)

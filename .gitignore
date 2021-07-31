@@ -4,3 +4,4 @@ node_modules
 /client/coverage
 /server/tmp
 coverage
+/server/cover.out

@@ -39,6 +39,8 @@ This repo adheres loosely to the [Scripts to Rule Them All] convention:
   on the front end so you'll have to reload a page to see changes.
 - `script/build` builds a single Docker image for Production using the
   `Dockerfile` at the root of the repo and tag it `:latest`.
+- `script/test` runs tests and captures coverage. Run `script/test -h` for
+  more information on usgae.
 
 Since this repo also contains, in a way, two distinct applications, there
 are also some helper scripts to make life a little easier:

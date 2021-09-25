@@ -13,7 +13,7 @@ usage() {
   echo '       -f:      fast mode. Does not run script/setup first.'
   echo '       -h:      help. Shows this dialogue.'
   echo '       service: "client" or "server" to only run one set of tests. May be'
-  printf '                passed \e[32margs\e[0m like \e[33mscript/test server -v ./internal/resolver\e[0m\n'
+  printf '                passed \e[32margs\e[0m like \e[33mscript/test server -v ./internal/schema\e[0m\n'
   printf '                or \e[33mscript/test client -t components/App\e[0m\n'
 }
 

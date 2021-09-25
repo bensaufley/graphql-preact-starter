@@ -40,7 +40,6 @@ RUN apk add --no-cache \
 WORKDIR /app
 COPY --from=go-builder /go/src/github.com/bensaufley/graphql-preact-starter/serve .
 COPY --from=node-builder /usr/src/graphql-preact-starter/.build /public
-COPY ./server/migrations/ ./migrations/
 
 VOLUME [ "/storage" ]
 

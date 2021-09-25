@@ -19,7 +19,7 @@ services:
     ports:
       - '4510:8080'
     volumes:
-      - db:/db
+      - db:/storage
       - jsbuild:/public
 
       - ./server:/go/src/github.com/bensaufley/graphql-preact-starter

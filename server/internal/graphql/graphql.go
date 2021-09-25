@@ -1,3 +1,4 @@
+// Package graphql provides the core logic for the GraphQL server itself
 package graphql
 
 import (
@@ -9,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/bensaufley/graphql-preact-starter/internal/db"
-	"github.com/bensaufley/graphql-preact-starter/internal/resolver"
+	"github.com/bensaufley/graphql-preact-starter/internal/schema"
 )
 
 type Config struct {
@@ -27,7 +28,7 @@ func (cfg *Config) NewHandler() (http.HandlerFunc, error) {
 		log.WithError(err).Fatal("error initializing database")
 	}
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
-	schm, err := graphql.ParseSchema(s, resolver.NewRoot(sqlite), opts...)
+	schm, err := graphql.ParseSchema(s, schema.NewRoot(sqlite), opts...)
 	if err != nil {
 		log.WithError(err).Fatal("could not parse schema")
 	}

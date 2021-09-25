@@ -1,57 +1,30 @@
+// Package db provides database-related structs and methods
 package db
 
 import (
-	"database/sql"
 	_ "embed"
 	"fmt"
-	"os"
 
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/sqlite3"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/pkg/errors"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+
+	"github.com/bensaufley/graphql-preact-starter/internal/entities"
 )
 
 type Config struct {
-	DBPath         string
-	MigrationsPath string
+	DBPath string
 }
 
-func (cfg *Config) Get() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", fmt.Sprintf("file:%s?mode=rwc", cfg.DBPath))
+func (cfg *Config) Get() (*gorm.DB, error) {
+	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=rwc", cfg.DBPath)), &gorm.Config{})
 	if err != nil {
-		return nil, errors.Wrap(err, "could not open database")
+		return nil, fmt.Errorf("could not open database at %s: %w", cfg.DBPath, err)
 	}
-	dbDriver, err := sqlite3.WithInstance(db, &sqlite3.Config{})
-	if err != nil {
-		return nil, errors.Wrap(err, "could not initialize migration driver")
-	}
-	if cfg.MigrationsPath != "" {
-		m, err := migrate.NewWithDatabaseInstance(
-			fmt.Sprintf("file://%s", cfg.MigrationsPath),
-			"sqlite3",
-			dbDriver,
-		)
-		if err != nil {
-			return nil, errors.Wrap(err, "could not initialize migrator")
-		}
-		err = m.Up()
-		if err != nil && !errors.Is(err, migrate.ErrNoChange) {
-			return nil, errors.Wrap(err, "could not run migrations")
-		}
+	if err := db.AutoMigrate(
+		&entities.Todo{},
+	); err != nil {
+		return nil, err
 	}
 	return db, nil
-}
-
-func (cfg *Config) InitFile() error {
-	_, err := os.Stat(cfg.DBPath)
-	if os.IsNotExist(err) {
-		file, err := os.Create(cfg.DBPath)
-		if err != nil {
-			return err
-		}
-		file.Close()
-	}
-	return nil
 }

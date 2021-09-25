@@ -1,3 +1,4 @@
+// Package server contains the main entry logic for the server, which is invoked from cmd.
 package server
 
 import (
@@ -6,14 +7,12 @@ import (
 	"path/filepath"
 	"regexp"
 
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/bensaufley/graphql-preact-starter/internal/graphiql"
 	"github.com/bensaufley/graphql-preact-starter/internal/graphql"
-	"github.com/pkg/errors"
-
-	log "github.com/sirupsen/logrus"
 )
-
-var fs = http.Dir("/public")
 
 func HandleStatic(extPath string, intPath string) http.Handler {
 	publicRegExp := regexp.MustCompile(fmt.Sprintf("^%s", intPath))

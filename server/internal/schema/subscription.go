@@ -1,4 +1,4 @@
-package resolver
+package schema
 
 import (
 	"context"
@@ -6,11 +6,12 @@ import (
 
 	"github.com/graph-gophers/graphql-go"
 
+	"github.com/bensaufley/graphql-preact-starter/internal/resolvers"
 	"github.com/bensaufley/graphql-preact-starter/internal/ulid"
 )
 
 type Subscriptions struct {
-	todoAdded   chan Todo
+	todoAdded   chan resolvers.TodoResolver
 	todoDeleted chan graphql.ID
 
 	addedSubscribers   chan *addedSubscriber
@@ -19,7 +20,7 @@ type Subscriptions struct {
 
 type addedSubscriber struct {
 	stop   <-chan struct{}
-	events chan<- Todo
+	events chan<- resolvers.TodoResolver
 }
 
 type deletedSubscriber struct {
@@ -27,8 +28,8 @@ type deletedSubscriber struct {
 	events chan<- graphql.ID
 }
 
-func (r *Resolver) TodoAdded(ctx context.Context) (<-chan Todo, error) {
-	ch := make(chan Todo)
+func (r *Resolver) TodoAdded(ctx context.Context) (<-chan resolvers.TodoResolver, error) {
+	ch := make(chan resolvers.TodoResolver)
 	r.Subscriptions.addedSubscribers <- &addedSubscriber{events: ch, stop: ctx.Done()}
 	return ch, nil
 }

@@ -1,3 +1,4 @@
+// Package schema provides all handlers for the GraphQL schema
 package schema
 
 import (

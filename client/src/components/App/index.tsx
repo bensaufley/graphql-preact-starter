@@ -31,7 +31,7 @@ let exchanges = [
 ];
 /* istanbul ignore if */
 if (process.env.NODE_ENV === 'development') {
-  /* eslint-disable global-require, @typescript-eslint/no-var-requires */
+  /* eslint-disable global-require, @typescript-eslint/no-var-requires, import/no-extraneous-dependencies */
   const { devtoolsExchange }: typeof urqlDevtools = require('@urql/devtools');
   exchanges = [devtoolsExchange, ...exchanges];
   /* eslint-enable global-require, @typescript-eslint/no-var-requires */

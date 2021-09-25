@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/graph-gophers/graphql-go"
-	"github.com/pkg/errors"
 
 	"github.com/bensaufley/graphql-preact-starter/internal/entities"
 	"github.com/bensaufley/graphql-preact-starter/internal/resolvers"
@@ -16,32 +15,11 @@ type TodoInput struct {
 	Status   *string
 }
 
-func TodoStatusFromString(str *string) (entities.TodoStatus, error) {
-	if str == nil {
-		return entities.Unstarted, nil
-	}
-
-	switch *str {
-	case "UNSTARTED":
-		return entities.Unstarted, nil
-	case "IN_PROGRESS":
-		return entities.InProgress, nil
-	case "ABANDONED":
-		return entities.Abandoned, nil
-	case "COMPLETE":
-		return entities.Complete, nil
-	case "DELETED":
-		return entities.Deleted, nil
-	default:
-		return entities.Unstarted, errors.New("unrecognized TodoStatus")
-	}
-}
-
 func (r *Resolver) AddTodo(
 	ctx context.Context,
 	args *struct{ Input TodoInput },
 ) (*resolvers.NullableTodoResolver, error) {
-	status, err := TodoStatusFromString(args.Input.Status)
+	status, err := entities.TodoStatusFromString(args.Input.Status)
 	if err != nil {
 		return nil, err
 	}

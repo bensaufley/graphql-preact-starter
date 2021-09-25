@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine as go-builder
+FROM golang:1.17.1-alpine as go-builder
 
 WORKDIR /go/src/github.com/bensaufley/graphql-preact-starter
 COPY ./server/go.mod ./server/go.sum ./

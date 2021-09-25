@@ -37,3 +37,23 @@ func (t TodoStatus) ToGQLEnum() string {
 	}
 }
 
+func TodoStatusFromString(str *string) (TodoStatus, error) {
+	if str == nil {
+		return Unstarted, nil
+	}
+
+	switch *str {
+	case "UNSTARTED":
+		return Unstarted, nil
+	case "IN_PROGRESS":
+		return InProgress, nil
+	case "ABANDONED":
+		return Abandoned, nil
+	case "COMPLETE":
+		return Complete, nil
+	case "DELETED":
+		return Deleted, nil
+	default:
+		return Unstarted, errors.New("unrecognized TodoStatus")
+	}
+}

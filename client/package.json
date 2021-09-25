@@ -58,7 +58,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "engines": {
-    "node": "16.5.0"
+    "node": "16.10.0"
   },
   "license": "MIT",
   "main": ".build/index.js",

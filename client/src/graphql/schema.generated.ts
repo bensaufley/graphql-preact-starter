@@ -29,8 +29,8 @@ export type MutationDeleteTodoArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  getTodos: Array<Todo>;
   getTodo: Maybe<Todo>;
+  getTodos: Array<Todo>;
 };
 
 export type QueryGetTodoArgs = {
@@ -45,8 +45,8 @@ export type Subscription = {
 
 export type Todo = {
   __typename?: 'Todo';
-  id: Scalars['ID'];
   contents: Scalars['String'];
+  id: Scalars['ID'];
   status: TodoStatus;
 };
 
@@ -56,9 +56,9 @@ export type TodoInput = {
 };
 
 export enum TodoStatus {
-  Unstarted = 'UNSTARTED',
-  InProgress = 'IN_PROGRESS',
   Abandoned = 'ABANDONED',
   Complete = 'COMPLETE',
   Deleted = 'DELETED',
+  InProgress = 'IN_PROGRESS',
+  Unstarted = 'UNSTARTED',
 }

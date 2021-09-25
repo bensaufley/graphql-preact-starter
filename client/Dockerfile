@@ -1,4 +1,4 @@
-FROM node:16.5.0-alpine
+FROM node:16.10.0-alpine
 LABEL maintainer="Ben Saufley<contact@bensaufley.com>"
 
 ENV NODE_ENV development

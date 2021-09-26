@@ -8,10 +8,10 @@ import (
 	"regexp"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/bensaufley/graphql-preact-starter/internal/graphiql"
 	"github.com/bensaufley/graphql-preact-starter/internal/graphql"
+	"github.com/bensaufley/graphql-preact-starter/internal/log"
 )
 
 func HandleStatic(extPath string, intPath string) http.Handler {
@@ -19,13 +19,13 @@ func HandleStatic(extPath string, intPath string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		p, err := filepath.Rel(extPath, r.URL.Path)
 		if err != nil {
-			log.WithError(err).Warn("could not get relative path from static")
+			log.Logger.WithError(err).Warn("could not get relative path from static")
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		pp := filepath.Clean(fmt.Sprintf("%s/%s", intPath, p))
 		if !publicRegExp.MatchString(pp) {
-			log.WithField("path", pp).Warn("clean public filepath is not within public")
+			log.Logger.WithField("path", pp).Warn("clean public filepath is not within public")
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}

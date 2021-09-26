@@ -23,7 +23,7 @@ func (r *Resolver) AddTodo(
 	if err != nil {
 		return nil, err
 	}
-	todo := entities.Todo{Contents: args.Input.Contents}.WithStatus(status)
+	todo := entities.Todo{Contents: args.Input.Contents, Status: status}
 	result := r.DB.WithContext(ctx).Create(&todo)
 	if result.Error != nil {
 		return nil, fmt.Errorf("could not insert Todo: %w", result.Error)

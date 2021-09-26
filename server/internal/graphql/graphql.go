@@ -7,9 +7,9 @@ import (
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"github.com/graph-gophers/graphql-transport-ws/graphqlws"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/bensaufley/graphql-preact-starter/internal/db"
+	"github.com/bensaufley/graphql-preact-starter/internal/log"
 	"github.com/bensaufley/graphql-preact-starter/internal/schema"
 )
 
@@ -21,16 +21,16 @@ type Config struct {
 func (cfg *Config) NewHandler() (http.HandlerFunc, error) {
 	s, err := cfg.SchemaString()
 	if err != nil {
-		log.WithError(err).Fatal("could not build schema string")
+		log.Logger.WithError(err).Fatal("could not build schema string")
 	}
 	sqlite, err := cfg.DB.Get()
 	if err != nil {
-		log.WithError(err).Fatal("error initializing database")
+		log.Logger.WithError(err).Fatal("error initializing database")
 	}
-	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
+	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers(), graphql.Logger(log.Logger)}
 	schm, err := graphql.ParseSchema(s, schema.NewRoot(sqlite), opts...)
 	if err != nil {
-		log.WithError(err).Fatal("could not parse schema")
+		log.Logger.WithError(err).Fatal("could not parse schema")
 	}
 	return graphqlws.NewHandlerFunc(schm, &relay.Handler{Schema: schm}), nil
 }

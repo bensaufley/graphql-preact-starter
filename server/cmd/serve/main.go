@@ -3,10 +3,9 @@ package main
 import (
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/bensaufley/graphql-preact-starter/internal/db"
 	"github.com/bensaufley/graphql-preact-starter/internal/graphql"
+	"github.com/bensaufley/graphql-preact-starter/internal/log"
 	"github.com/bensaufley/graphql-preact-starter/internal/schema"
 	"github.com/bensaufley/graphql-preact-starter/internal/server"
 )
@@ -21,11 +20,11 @@ func main() {
 
 	mux, err := server.New(cfg)
 	if err != nil {
-		log.WithError(err).Fatal("could noot initialize server")
+		log.Logger.WithError(err).Fatal("could noot initialize server")
 	}
 
-	log.Info("server listening on :8080")
+	log.Logger.Info("server listening on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
-		log.WithError(err).Fatal("could not start server")
+		log.Logger.WithError(err).Fatal("could not start server")
 	}
 }

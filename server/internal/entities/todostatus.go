@@ -16,6 +16,10 @@ const (
 	Deleted    TodoStatus = "Deleted"
 )
 
+func (t TodoStatus) String() string {
+	return string(t)
+}
+
 func (t *TodoStatus) Scan(value interface{}) error {
 	if str, ok := value.(string); ok {
 		*t = TodoStatus(str)

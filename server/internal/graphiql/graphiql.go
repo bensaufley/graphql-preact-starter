@@ -6,7 +6,7 @@ import (
 	_ "embed"
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/bensaufley/graphql-preact-starter/internal/log"
 )
 
 //go:embed index.html
@@ -14,6 +14,6 @@ var html []byte
 
 var Serve = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	if _, err := w.Write(html); err != nil {
-		log.WithContext(r.Context()).WithError(err).Error("encountered error serving graphiql")
+		log.Logger.WithContext(r.Context()).WithError(err).Error("encountered error serving graphiql")
 	}
 })

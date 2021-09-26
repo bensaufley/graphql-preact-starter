@@ -44,5 +44,5 @@ func (t *NullableTodoResolver) Status() string {
 }
 
 func (t TodoResolver) Status() string {
-	return t.StatusGQLEnum()
+	return t.Todo.Status.ToGQLEnum()
 }

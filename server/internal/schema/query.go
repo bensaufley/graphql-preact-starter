@@ -4,18 +4,20 @@ import (
 	"context"
 
 	"github.com/bensaufley/graphql-preact-starter/internal/entities"
+	"github.com/bensaufley/graphql-preact-starter/internal/log"
 	"github.com/bensaufley/graphql-preact-starter/internal/resolvers"
 )
 
 func (r *Resolver) GetTodos(ctx context.Context) ([]resolvers.TodoResolver, error) {
 	var todos []entities.Todo
 	if err := r.DB.WithContext(ctx).Find(&todos); err.Error != nil {
+		log.Logger.WithError(err.Error).Error("error finding todos")
 		return []resolvers.TodoResolver{}, err.Error
 	}
 	rslvrs := make([]resolvers.TodoResolver, len(todos))
-	for _, t := range todos {
+	for i, t := range todos {
 		todo := t
-		rslvrs = append(rslvrs, resolvers.TodoResolver{Todo: todo})
+		rslvrs[i] = resolvers.TodoResolver{Todo: todo}
 	}
 	return rslvrs, nil
 }

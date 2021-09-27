@@ -15,7 +15,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 import styles from '~components/App/styles.modules.css';
 import Home from '~components/Home';
-import { todoAdded, todoDeleted } from '~lib/cacheExchangeResolvers';
+import { todoAdded, todoDeleted, todoUpdated } from '~lib/cacheExchangeResolvers';
 
 let exchanges = [
   dedupExchange,
@@ -23,6 +23,7 @@ let exchanges = [
     updates: {
       Subscription: {
         todoAdded,
+        todoUpdated,
         todoDeleted,
       },
     },

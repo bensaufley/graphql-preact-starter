@@ -1,4 +1,6 @@
 type Mutation {
   addTodo(input: TodoInput!): Todo
+  advanceTodo(id: ID!): Todo
+  transitionTodo(id: ID!, status: TodoStatus!): Todo
   deleteTodo(id: ID!): Boolean!
 }

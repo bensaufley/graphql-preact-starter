@@ -5,27 +5,26 @@ import (
 
 	"github.com/bensaufley/graphql-preact-starter/internal/entities"
 	"github.com/bensaufley/graphql-preact-starter/internal/log"
-	"github.com/bensaufley/graphql-preact-starter/internal/resolvers"
 )
 
-func (r *Resolver) GetTodos(ctx context.Context) ([]resolvers.TodoResolver, error) {
+func (r *Resolver) GetTodos(ctx context.Context) ([]TodoResolver, error) {
 	var todos []entities.Todo
 	if err := r.DB.WithContext(ctx).Find(&todos); err.Error != nil {
 		log.Logger.WithError(err.Error).Error("error finding todos")
-		return []resolvers.TodoResolver{}, err.Error
+		return []TodoResolver{}, err.Error
 	}
-	rslvrs := make([]resolvers.TodoResolver, len(todos))
+	rslvrs := make([]TodoResolver, len(todos))
 	for i, t := range todos {
 		todo := t
-		rslvrs[i] = resolvers.TodoResolver{Todo: todo}
+		rslvrs[i] = TodoResolver{Todo: todo}
 	}
 	return rslvrs, nil
 }
 
-func (r *Resolver) GetTodo(ctx context.Context, args *struct{ ID string }) (*resolvers.TodoResolver, error) {
+func (r *Resolver) GetTodo(ctx context.Context, args *struct{ ID string }) (*TodoResolver, error) {
 	var todo entities.Todo
 	if err := r.DB.WithContext(ctx).First(&todo, "id = ?", args.ID); err.Error != nil {
 		return nil, err.Error
 	}
-	return &resolvers.TodoResolver{Todo: todo}, nil
+	return &TodoResolver{Resolver: r, Todo: todo}, nil
 }

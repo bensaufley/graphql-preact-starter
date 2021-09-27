@@ -14,6 +14,14 @@ subscription TodoAdded {
   }
 }
 
+subscription TodoUpdated {
+  todo: todoUpdated {
+    id
+    contents
+    status
+  }
+}
+
 subscription TodoDeleted {
   todoID: todoDeleted
 }
@@ -21,6 +29,19 @@ subscription TodoDeleted {
 mutation AddTodo($contents: String!) {
   addTodo(input: {contents: $contents}) {
     id
+  }
+}
+
+mutation AdvanceTodo($id: ID!) {
+  advanceTodo(id: $id) {
+    id
+  }
+}
+
+mutation TransitionTodo($id: ID!, $status: TodoStatus!) {
+  transitionTodo(id: $id, status: $status) {
+    id
+    status
   }
 }
 

@@ -25,6 +25,13 @@ export type TodoAddedSubscription = {
   todo: { __typename?: 'Todo'; id: string; contents: string; status: SchemaTypes.TodoStatus };
 };
 
+export type TodoUpdatedSubscriptionVariables = SchemaTypes.Exact<{ [key: string]: never }>;
+
+export type TodoUpdatedSubscription = {
+  __typename?: 'Subscription';
+  todo: { __typename?: 'Todo'; id: string; contents: string; status: SchemaTypes.TodoStatus };
+};
+
 export type TodoDeletedSubscriptionVariables = SchemaTypes.Exact<{ [key: string]: never }>;
 
 export type TodoDeletedSubscription = { __typename?: 'Subscription'; todoID: string };
@@ -36,6 +43,29 @@ export type AddTodoMutationVariables = SchemaTypes.Exact<{
 export type AddTodoMutation = {
   __typename?: 'Mutation';
   addTodo: SchemaTypes.Maybe<{ __typename?: 'Todo'; id: string }>;
+};
+
+export type AdvanceTodoMutationVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['ID'];
+}>;
+
+export type AdvanceTodoMutation = {
+  __typename?: 'Mutation';
+  advanceTodo: SchemaTypes.Maybe<{ __typename?: 'Todo'; id: string }>;
+};
+
+export type TransitionTodoMutationVariables = SchemaTypes.Exact<{
+  id: SchemaTypes.Scalars['ID'];
+  status: SchemaTypes.TodoStatus;
+}>;
+
+export type TransitionTodoMutation = {
+  __typename?: 'Mutation';
+  transitionTodo: SchemaTypes.Maybe<{
+    __typename?: 'Todo';
+    id: string;
+    status: SchemaTypes.TodoStatus;
+  }>;
 };
 
 export type DeleteTodoMutationVariables = SchemaTypes.Exact<{
@@ -78,6 +108,25 @@ export function useTodoAddedSubscription<TData = TodoAddedSubscription>(
     handler,
   );
 }
+export const TodoUpdatedDocument = gql`
+  subscription TodoUpdated {
+    todo: todoUpdated {
+      id
+      contents
+      status
+    }
+  }
+`;
+
+export function useTodoUpdatedSubscription<TData = TodoUpdatedSubscription>(
+  options: Omit<Urql.UseSubscriptionArgs<TodoUpdatedSubscriptionVariables>, 'query'> = {},
+  handler?: Urql.SubscriptionHandler<TodoUpdatedSubscription, TData>,
+) {
+  return Urql.useSubscription<TodoUpdatedSubscription, TData, TodoUpdatedSubscriptionVariables>(
+    { query: TodoUpdatedDocument, ...options },
+    handler,
+  );
+}
 export const TodoDeletedDocument = gql`
   subscription TodoDeleted {
     todoID: todoDeleted
@@ -103,6 +152,31 @@ export const AddTodoDocument = gql`
 
 export function useAddTodoMutation() {
   return Urql.useMutation<AddTodoMutation, AddTodoMutationVariables>(AddTodoDocument);
+}
+export const AdvanceTodoDocument = gql`
+  mutation AdvanceTodo($id: ID!) {
+    advanceTodo(id: $id) {
+      id
+    }
+  }
+`;
+
+export function useAdvanceTodoMutation() {
+  return Urql.useMutation<AdvanceTodoMutation, AdvanceTodoMutationVariables>(AdvanceTodoDocument);
+}
+export const TransitionTodoDocument = gql`
+  mutation TransitionTodo($id: ID!, $status: TodoStatus!) {
+    transitionTodo(id: $id, status: $status) {
+      id
+      status
+    }
+  }
+`;
+
+export function useTransitionTodoMutation() {
+  return Urql.useMutation<TransitionTodoMutation, TransitionTodoMutationVariables>(
+    TransitionTodoDocument,
+  );
 }
 export const DeleteTodoDocument = gql`
   mutation DeleteTodo($id: ID!) {

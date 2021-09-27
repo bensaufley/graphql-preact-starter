@@ -16,15 +16,26 @@ export type Scalars = {
 export type Mutation = {
   __typename?: 'Mutation';
   addTodo: Maybe<Todo>;
+  advanceTodo: Maybe<Todo>;
   deleteTodo: Scalars['Boolean'];
+  transitionTodo: Maybe<Todo>;
 };
 
 export type MutationAddTodoArgs = {
   input: TodoInput;
 };
 
+export type MutationAdvanceTodoArgs = {
+  id: Scalars['ID'];
+};
+
 export type MutationDeleteTodoArgs = {
   id: Scalars['ID'];
+};
+
+export type MutationTransitionTodoArgs = {
+  id: Scalars['ID'];
+  status: TodoStatus;
 };
 
 export type Query = {
@@ -41,6 +52,7 @@ export type Subscription = {
   __typename?: 'Subscription';
   todoAdded: Todo;
   todoDeleted: Scalars['ID'];
+  todoUpdated: Todo;
 };
 
 export type Todo = {

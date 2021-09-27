@@ -3,6 +3,7 @@ package entities
 import (
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -60,4 +61,19 @@ func TodoStatusFromString(str *string) (TodoStatus, error) {
 	default:
 		return Unstarted, errors.New("unrecognized TodoStatus")
 	}
+}
+
+func (t *TodoStatus) Advance() error {
+	if t == nil {
+		return errors.New("todoStatus is nil")
+	}
+	switch *t {
+	case Unstarted:
+		*t = InProgress
+	case InProgress:
+		*t = Complete
+	default:
+		return fmt.Errorf("cannot advance from status \"%s\"", t.String())
+	}
+	return nil
 }

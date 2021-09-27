@@ -1,6 +1,4 @@
-// Package resolvers provides wrapper structs to entities to enable nested GraphQL
-// resolution.
-package resolvers
+package schema
 
 import (
 	"github.com/graph-gophers/graphql-go"
@@ -9,6 +7,7 @@ import (
 )
 
 type TodoResolver struct {
+	*Resolver
 	entities.Todo
 }
 

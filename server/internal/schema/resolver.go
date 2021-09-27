@@ -3,8 +3,6 @@ package schema
 import (
 	"github.com/graph-gophers/graphql-go"
 	"gorm.io/gorm"
-
-	"github.com/bensaufley/graphql-preact-starter/internal/resolvers"
 )
 
 type Resolver struct {
@@ -16,10 +14,12 @@ func NewRoot(db *gorm.DB) *Resolver {
 	r := &Resolver{
 		DB: db,
 		Subscriptions: Subscriptions{
-			todoAdded:   make(chan resolvers.TodoResolver),
+			todoAdded:   make(chan TodoResolver),
+			todoUpdated: make(chan TodoResolver),
 			todoDeleted: make(chan graphql.ID),
 
-			addedSubscribers:   make(chan *addedSubscriber),
+			addedSubscribers:   make(chan *todoSubscriber),
+			updatedSubscribers: make(chan *todoSubscriber),
 			deletedSubscribers: make(chan *deletedSubscriber),
 		},
 	}

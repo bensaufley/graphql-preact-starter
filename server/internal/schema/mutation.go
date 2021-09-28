@@ -28,9 +28,7 @@ func (r *Resolver) AddTodo(
 		return nil, fmt.Errorf("could not insert Todo: %w", result.Error)
 	}
 
-	go func(r *Resolver, t TodoResolver) {
-		r.Subscriptions.todoAdded <- t
-	}(r, TodoResolver{Todo: todo})
+	go r.todoAdded(todo)
 
 	return &NullableTodoResolver{Resolver: r, Todo: todo}, nil
 }
@@ -53,9 +51,7 @@ func (r *Resolver) AdvanceTodo(
 		return nil, fmt.Errorf("could not update Todo: %w", result.Error)
 	}
 
-	go func(r *Resolver, t TodoResolver) {
-		r.Subscriptions.todoUpdated <- t
-	}(r, TodoResolver{Todo: todo})
+	go r.todoUpdated(todo)
 
 	return &NullableTodoResolver{Resolver: r, Todo: todo}, nil
 }
@@ -80,9 +76,8 @@ func (r *Resolver) TransitionTodo(
 	}
 
 	todo.Status = status
-	go func(r *Resolver, t TodoResolver) {
-		r.Subscriptions.todoUpdated <- t
-	}(r, TodoResolver{Todo: todo})
+
+	go r.todoUpdated(todo)
 
 	return &NullableTodoResolver{Resolver: r, Todo: todo}, nil
 }
@@ -93,9 +88,7 @@ func (r *Resolver) DeleteTodo(ctx context.Context, args *struct{ ID graphql.ID }
 		return false, fmt.Errorf("could not delete Todo: %w", result.Error)
 	}
 
-	go func(r *Resolver, id graphql.ID) {
-		r.Subscriptions.todoDeleted <- id
-	}(r, args.ID)
+	go r.todoDeleted(args.ID)
 
 	return true, nil
 }

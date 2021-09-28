@@ -1,68 +1,14 @@
 import { FunctionComponent, h, JSX } from 'preact';
-import { useCallback, useMemo, useState } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 
 import {
   useAddTodoMutation,
-  useAdvanceTodoMutation,
-  useDeleteTodoMutation,
   useGetTodosQuery,
   useTodoAddedSubscription,
   useTodoDeletedSubscription,
   useTodoUpdatedSubscription,
-  useTransitionTodoMutation,
 } from '~components/Home/home.generated';
-import { Todo, TodoStatus } from '~graphql/schema.generated';
-
-const advanceableStatuses: TodoStatus[] = [TodoStatus.Unstarted, TodoStatus.InProgress];
-
-const ListItem = ({ id, contents, status }: Todo) => {
-  const [, advanceMutation] = useAdvanceTodoMutation();
-  const [, transitionMutation] = useTransitionTodoMutation();
-  const [, deleteMutation] = useDeleteTodoMutation();
-  const isAdvanceable = useMemo(() => advanceableStatuses.includes(status), [status]);
-  const advanceTodo: JSX.MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (!isAdvanceable) return;
-
-      advanceMutation({ id });
-    },
-    [advanceMutation, id, isAdvanceable],
-  );
-  const transitionTodo: JSX.GenericEventHandler<HTMLSelectElement> = useCallback(
-    ({ currentTarget }) => {
-      transitionMutation({ id, status: currentTarget!.value as TodoStatus });
-    },
-    [transitionMutation, id],
-  );
-  const deleteTodo: JSX.MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      e.preventDefault();
-      deleteMutation({ id });
-    },
-    [deleteMutation, id],
-  );
-
-  return (
-    <li id={id} title={id}>
-      {contents} (
-      <select onChange={transitionTodo} value={status}>
-        {Object.values(TodoStatus).map((st) => (
-          <option value={st}>{st}</option>
-        ))}
-      </select>
-      ){' '}
-      {isAdvanceable && (
-        <button type="button" onClick={advanceTodo}>
-          &rarr;
-        </button>
-      )}{' '}
-      <button type="button" onClick={deleteTodo}>
-        &times;
-      </button>
-    </li>
-  );
-};
+import ListItem from '~components/ListItem';
 
 const Home: FunctionComponent = () => {
   const [{ data, error, fetching }] = useGetTodosQuery();

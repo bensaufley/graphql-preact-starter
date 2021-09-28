@@ -3,11 +3,25 @@ package schema
 import (
 	"github.com/graph-gophers/graphql-go"
 	"gorm.io/gorm"
+
+	"github.com/bensaufley/graphql-preact-starter/internal/entities"
 )
 
 type Resolver struct {
 	DB            *gorm.DB
 	Subscriptions Subscriptions
+}
+
+func (r *Resolver) todoAdded(t entities.Todo) {
+	r.Subscriptions.todoAdded <- TodoResolver{Resolver: r, Todo: t}
+}
+
+func (r *Resolver) todoUpdated(t entities.Todo) {
+	r.Subscriptions.todoUpdated <- TodoResolver{Resolver: r, Todo: t}
+}
+
+func (r *Resolver) todoDeleted(id graphql.ID) {
+	r.Subscriptions.todoDeleted <- id
 }
 
 func NewRoot(db *gorm.DB) *Resolver {
